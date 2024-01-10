@@ -21,6 +21,7 @@ object Metrics {
     object Events {
         const val Login = "minecraft_events_login_total"
         const val Join = "minecraft_events_join_total"
+        const val JoinUnique = "minecraft_events_join_unique_total"
         const val Quit = "minecraft_events_quit_total"
         const val Chat = "minecraft_events_chat_total"
         const val Ping = "minecraft_events_ping_total"

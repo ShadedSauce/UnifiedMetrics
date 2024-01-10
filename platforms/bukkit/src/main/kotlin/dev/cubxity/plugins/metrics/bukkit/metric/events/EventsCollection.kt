@@ -38,12 +38,13 @@ import org.bukkit.event.server.ServerListPingEvent
 class EventsCollection(private val bootstrap: UnifiedMetricsBukkitBootstrap) : CollectorCollection, Listener {
     private val loginCounter = Counter(Metrics.Events.Login)
     private val joinCounter = Counter(Metrics.Events.Join, valueStoreFactory = VolatileDoubleStore)
+    private val uniqueJoinCounter = Counter(Metrics.Events.JoinUnique, valueStoreFactory = VolatileDoubleStore)
     private val quitCounter = Counter(Metrics.Events.Quit, valueStoreFactory = VolatileDoubleStore)
     private val chatCounter = Counter(Metrics.Events.Chat)
     private val pingCounter = Counter(Metrics.Events.Ping) // TODO: is this async?
 
     override val collectors: List<Collector> =
-        listOf(loginCounter, joinCounter, quitCounter, chatCounter, pingCounter)
+        listOf(loginCounter, joinCounter, uniqueJoinCounter, quitCounter, chatCounter, pingCounter)
 
     override val isAsync: Boolean
         get() = true
@@ -63,6 +64,10 @@ class EventsCollection(private val bootstrap: UnifiedMetricsBukkitBootstrap) : C
 
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
+        if(!event.player.hasPlayedBefore()) {
+            uniqueJoinCounter.inc()
+        }
+
         joinCounter.inc()
     }
 
